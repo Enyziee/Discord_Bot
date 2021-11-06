@@ -1,14 +1,19 @@
+from tk import token
 import discord
 from discord.ext import commands
-from discord.ext.commands.core import command
 
-client = commands.Bot(command_prefix='.')
+client = commands.Bot(command_prefix='we!')
 
 
 @client.event
 async def on_ready():
-    print(f" we have logged in as {client.user}")
+    print("O Bot está pronto")
 
+
+@client.command
+async def play(ctx):
+    channel = ctx.message.author.voice.channel
+    print(channel)
 
 @client.event
 async def on_message(message):
@@ -19,4 +24,4 @@ async def on_message(message):
         await message.channel.send("Hello!")
 
 
-client.run("ODk3OTQ5MDYyOTc5MDI3MDA0.YWdGOw.HGH7JUrna0BjZ4V-XJIxuewFPGY")
+client.run(token)
