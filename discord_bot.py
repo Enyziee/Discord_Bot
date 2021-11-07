@@ -1,27 +1,44 @@
-from tk import token
-import discord
+import os
+from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext import tasks
 
-client = commands.Bot(command_prefix='we!')
+client = commands.Bot(command_prefix='we!', )
+load_dotenv()
 
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 @client.event
 async def on_ready():
     print("O Bot está pronto")
 
 
-@client.command
-async def play(ctx):
-    channel = ctx.message.author.voice.channel
-    print(channel)
+@task.loop(seconds=5)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
+
+@client.command()
+async def ping(ctx):
+    await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
+
+
+@client.command()
+async def join(ctx):
+    if not ctx.message.author.voice.channel:
+        await ctx.send(f"Você não está conectado a um canal de voz {ctx.message.author.name}")
         return
-    print(message)
-    if message.content.startswith("$hello"):
-        await message.channel.send("Hello!")
+    else:
+        channel = ctx.message.author.voice.channel
+        await channel.connect()
 
 
-client.run(token)
+@client.command()
+async def leave(ctx):
+    voice_client = ctx.message.guild.voice_client
+    await voice_client.disconnect()
+
+
+@client.command()
+async def sendmsg(ctx):
+    await ctx.send("alskdhalsdhlasd")
+
+client.run(BOT_TOKEN)
