@@ -2,17 +2,27 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 
-client = commands.Bot(command_prefix='we!', )
+client = commands.Bot(command_prefix="!", )
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
+def init_cogs():
+    for cog in os.listdir("cogs/"):
+        if cog.endswith(".py"):
+            client.load_extension(f"cogs.{cog[:-3]}")
+
+def deact_cogs():
+    for cog in os.listdir("cogs/"):
+        if cog.endswith(".py"):
+            client.unload_extension(f"cogs.{cog[:-3]}")
 
 @client.event
 async def on_ready():
-    print("O Bot está pronto")
-    client.load_extension('cogs.music_cog')
-    client.load_extension('cogs.utils_cog')
+    print("Iniciando cogs...")
+    init_cogs()
+    print("O Bot está pronto!")
+    
 
 
 @client.command()
@@ -22,20 +32,20 @@ async def ping(ctx):
 
 @client.command()
 async def load(ctx):
-    client.load_extension(f'cogs.music_cog')
+    init_cogs()
     await ctx.send("Cog loaded")
 
 
 @client.command()
 async def unload(ctx):
-    client.unload_extension(f'cogs.music_cog')
+    deact_cogs()
     await ctx.send("Cog unloaded")
 
 
 @client.command()
 async def restart(ctx):
-    client.unload_extension(f'cogs.music_cog')
-    client.load_extension(f'cogs.music_cog')
+    init_cogs()
+    deact_cogs()
     await ctx.send("Cog restarted")
 
 
