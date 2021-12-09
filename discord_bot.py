@@ -44,8 +44,8 @@ async def unload(ctx):
 
 @client.command()
 async def restart(ctx):
-    init_cogs()
     deact_cogs()
+    init_cogs()
     await ctx.send("Cog restarted")
 
 
