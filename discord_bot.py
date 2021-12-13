@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 
-client = commands.Bot(command_prefix="!", )
+client = commands.Bot(command_prefix=".", )
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -23,7 +23,6 @@ async def on_ready():
     init_cogs()
     print("O Bot está pronto!")
     
-
 
 @client.command()
 async def ping(ctx):
