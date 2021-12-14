@@ -1,11 +1,13 @@
 from discord.ext import commands
-
+#libs para utils
 
 class Utils(commands.Cog):
     def __init__(self, client):
         self.client = client
-        
-#funcao do comando clear(delata mensagens)
+#classe utilisada 
+
+
+
     @commands.command()
     async def clear(self, ctx, limit=1):
         deleted = await ctx.channel.purge(limit=limit+1)
@@ -16,8 +18,8 @@ class Utils(commands.Cog):
             await ctx.send('1 mensagem apagada!')
         else:
             await ctx.send(f'{len(deleted)} mensagens apagadas!')  
- 
- #funcao memes, retorna        
+ #funcao do comando clear(delata mensagens)
+       
     @commands.command()
     async def sim(self, ctx):
         await ctx.send("nao") 
@@ -25,7 +27,15 @@ class Utils(commands.Cog):
     @commands.command()
     async def nao(self, ctx):
         await ctx.send("sim")
-
+#funcao memes, retorna  
+ 
+    @commands.command()
+    async def ping(ctx):
+        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
+#Comando clear -> limpa mensagens
 
 def setup(client):
-    client.add_cog(Utils(client))
+    client.add_cog(Utils(client)) 
+
+
+
