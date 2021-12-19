@@ -41,7 +41,6 @@ def init_cogs():
     for cog in os.listdir("cogs/"):
         if cog.endswith("cog.py"):
             client.load_extension(f"cogs.{cog[:-3]}")
-            print(f"{cog[:-3].capitalize()} carregada.")
 
 
 # Desativa as COGS
@@ -49,7 +48,6 @@ def deact_cogs():
     for cog in os.listdir("cogs/"):
         if cog.endswith("cog.py"):
             client.unload_extension(f"cogs.{cog[:-3]}")
-            print(f"{cog[:-3].capitalize()} descarregada.")
 
 
 # Adiciona o servidor no PREFIX_FILE
@@ -76,18 +74,19 @@ async def on_guild_remove(guild):
         json.dump(prefixes, file, indent=4)
 
 
+# Reinicia as cogs
+@client.command(hidden=True)
+async def restart(ctx):
+    deact_cogs()
+    init_cogs()
+    print("Cogs reiniciadas")
+
+
 @client.event
 async def on_ready():
     print("Iniciando cogs...")
     init_cogs()
     print("O Bot está pronto!")
-
-
-@client.command()
-async def _restart(ctx):
-    deact_cogs()
-    init_cogs()
-    await ctx.send("Cog restarted")
 
 
 if __name__ == "__main__":
