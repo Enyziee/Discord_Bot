@@ -2,15 +2,12 @@ import os
 import json
 from discord.flags import Intents
 from discord.ext import commands
-from dotenv import load_dotenv
 
-# Token do bot
-load_dotenv()
-TOKEN = os.getenv("TEST_TOKEN")
+TOKEN = os.getenv('TOKEN')
 
 # Arquivo onde será salvo o prefixo de de cada servidor
 PREFIX_FILE = "guilds_prefix.json"
-DEFAULT_PREFIX = "!"
+DEFAULT_PREFIX = "."
 
 
 if PREFIX_FILE not in os.listdir():
@@ -72,6 +69,28 @@ async def on_guild_remove(guild):
 
     with open(PREFIX_FILE, 'w') as file:
         json.dump(prefixes, file, indent=4)
+
+@client.command()
+async def guild_join(ctx):
+    with open(PREFIX_FILE, "r",) as file:
+        prefixes = json.load(file)
+
+    prefixes[str(ctx.guild.id)] = DEFAULT_PREFIX
+
+    with open(PREFIX_FILE, "w",) as file:
+        json.dump(prefixes, file, indent=4)
+
+
+@client.command()
+async def guild_remove(ctx):
+    with open(PREFIX_FILE, 'r') as file:
+        prefixes = json.load(file)
+
+    prefixes.pop(str(ctx.guild.id))
+
+    with open(PREFIX_FILE, 'w') as file:
+        json.dump(prefixes, file, indent=4)
+
 
 
 # Reinicia as cogs

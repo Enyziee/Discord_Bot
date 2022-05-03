@@ -1,6 +1,7 @@
 .venv
-.env
+tokens.txt
 __pycache__
 .vscode
 .dockerignore
 *.json
+.github

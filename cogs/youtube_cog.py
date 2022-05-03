@@ -186,17 +186,16 @@ class Music(commands.Cog):
     # Começar a tocar a música
     @commands.command(help="Reproduz um video do youtube")
     async def play(self, ctx, search: str = None):
-
-        vc = ctx.voice_client
-
-        if not vc:
-            await ctx.invoke(self.connect)
-
         player = self.get_player(ctx)
         source = await YTDLSource.create_source(ctx, search, loop=self.client.loop)
 
         if isinstance(source, DownloadError):
             return await ctx.send(f"URL inválida:", delete_after=15)
+
+        vc = ctx.voice_client
+
+        if not vc:
+            await ctx.invoke(self.connect)        
 
         await player.queue.put(source)
 
@@ -224,6 +223,11 @@ class Music(commands.Cog):
             return await ctx.send(f"Não estou tocando nada no momento!", delete_after=15)
 
         await self.cleanup(ctx.guild)
+
+    @commands.command(help="Mostra as musicas na fila")
+    async def queue(self, ctx):
+        pass
+
 
 def setup(client):
     client.add_cog(Music(client))

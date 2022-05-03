@@ -1,4 +1,8 @@
+import json
 from discord.ext import commands
+PREFIX_FILE = "guilds_prefix.json"
+DEFAULT_PREFIX = "."
+
 #libs para utils
 
 class Utils(commands.Cog):
@@ -31,8 +35,14 @@ class Utils(commands.Cog):
  
     @commands.command()
     async def ping(ctx):
-        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
+        await ctx.send(f"Pong! {round(ctx.client.latency * 1000)}ms")
 #Comando clear -> limpa mensagens
+
+
+
+
+
+
 
 def setup(client):
     client.add_cog(Utils(client)) 
