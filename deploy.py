@@ -1,10 +1,10 @@
 import os
 
 TOKEN = ""
-BUILD_DOCKER = "docker build . -t discord_bot"
-RUN_DOCKER = f"docker run -d -e TOKEN={TOKEN} --restart always --name bot discord_bot"
-RM_CONTAINER = "docker rm bot"
-STOP_CONTAINER = "docker stop bot"
+BUILD_DOCKER = "sudo docker build . -t discord_bot"
+RUN_DOCKER = "sudo docker run -d -e TOKEN={TOKEN} --restart always --name bot discord_bot"
+RM_CONTAINER = "sudo docker rm bot"
+STOP_CONTAINER = "sudo docker stop bot"
 PULL = "git pull"
 
 if TOKEN:
@@ -19,7 +19,7 @@ if TOKEN:
     os.system(RM_CONTAINER)
     print("\nIniciando Container atualizado!")
     os.system(RUN_DOCKER)
+    os.system("sudo docker ps")
 
-    os.system("docker ps")
-
-print("Sem Token definido")
+else:
+    print("Sem Token definido")
