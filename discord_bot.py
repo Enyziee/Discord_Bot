@@ -28,7 +28,7 @@ def get_prefix(client, message):
 
 # Inicializa o objeto com o Discord Bot
 client = commands.Bot(
-    command_prefix=get_prefix,
+    command_prefix=DEFAULT_PREFIX,
     intents=Intents.default()
 )
 
@@ -37,14 +37,20 @@ client = commands.Bot(
 def init_cogs():
     for cog in os.listdir("cogs/"):
         if cog.endswith("cog.py"):
-            client.load_extension(f"cogs.{cog[:-3]}")
+            try:
+                client.load_extension(f"cogs.{cog[:-3]}")
+            except Exception as e:
+                print(e)
 
 
 # Desativa as COGS
 def deact_cogs():
     for cog in os.listdir("cogs/"):
         if cog.endswith("cog.py"):
-            client.unload_extension(f"cogs.{cog[:-3]}")
+            try:
+                client.unload_extension(f"cogs.{cog[:-3]}")
+            except Exception as e:
+                print(e)
 
 
 # Adiciona o servidor no PREFIX_FILE

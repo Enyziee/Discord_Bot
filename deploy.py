@@ -1,11 +1,11 @@
 import os
 
-TOKEN = ""
+TOKEN = "OTE5MDgzNzMwMzk4NzYxMDMw.YbQpbQ.FQYf_EWpEWlO6T9AfW7uCQncOag"
 BUILD_DOCKER = "sudo docker build . -t discord_bot"
-RUN_DOCKER = "sudo docker run -d -e TOKEN={TOKEN} --restart always --name bot discord_bot"
+RUN_DOCKER = f"sudo docker run -d -e TOKEN={TOKEN} --restart always --name bot discord_bot"
 RM_CONTAINER = "sudo docker rm bot"
 STOP_CONTAINER = "sudo docker stop bot"
-PULL = "git pull"
+PULL = "sudo git pull"
 
 if TOKEN:
     print("\nProcurando uma nova versão!")
