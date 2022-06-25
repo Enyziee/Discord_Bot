@@ -10,8 +10,6 @@ from my_logging import log
 
 TOKEN = os.getenv('TOKEN')
 
-TOKEN = "OTE5MDgzNzMwMzk4NzYxMDMw.GH64qJ.iCP9FLvFc6bYmPSbJ576_KDqJzPKvAU98fPHUA"
-
 # Arquivo onde será salvo o prefixo de de cada servidor
 PREFIX_FILE = "guilds_prefix.json"
 DEFAULT_PREFIX = "!"
