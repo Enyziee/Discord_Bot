@@ -8,6 +8,8 @@ from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from urllib.parse import urlsplit
 
+from my_logging import log
+
 
 ytdl_options = {
     'format': 'bestaudio/best',
@@ -56,7 +58,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         try:
             to_run = partial(ytdl.extract_info, url=search, download=download)
             data = await loop.run_in_executor(None, to_run)
-        
+            log(f"Reproduzindo {data['webpage_url']}")
+
         except DownloadError as e:
             return e
 
@@ -143,6 +146,7 @@ class Music(commands.Cog):
     async def cleanup(self, guild):
         try:
             await guild.voice_client.disconnect()
+            log(f'Player da guilda {guild.name} destruido')
         except AttributeError:
             pass
 
@@ -158,7 +162,7 @@ class Music(commands.Cog):
         if not channel:
             try:
                 channel = ctx.author.voice.channel
-
+                log(msg=f"Conectado no canal '{channel}' do server {ctx.guild.name}")
             except AttributeError:
                 return await ctx.send(f"Você não está conectado a um canal de voz!")
                 
@@ -185,13 +189,15 @@ class Music(commands.Cog):
     # Começar a tocar a música
     @commands.command(help="Reproduz um video do youtube")
     async def play(self, ctx, *search):    
+        log('Chamou o comando "play"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
 
         search = " ".join(search)
         player = self.get_player(ctx)
         source = await YTDLSource.create_source(ctx, search, loop=self.client.loop)
 
         if isinstance(source, DownloadError):
-            return await ctx.send(f"URL inválida:", delete_after=15)
+            log(msg=source)
+            return await ctx.send(f"Ocorreu um problema com este download:", delete_after=15)
 
         vc = ctx.voice_client
 
@@ -203,6 +209,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["next"], help="Avança para a próxima música da fila")
     async def skip(self, ctx):
+        log('Chamou o comando "skip"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
@@ -218,6 +225,7 @@ class Music(commands.Cog):
         
     @commands.command(help="Para a reprodução e limpa a fila de musicas")
     async def stop(self, ctx):
+        log('Chamou o comando "stop"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():

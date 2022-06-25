@@ -3,7 +3,10 @@ import json
 
 from discord.flags import Intents
 from discord.ext import commands
+from discord.ext.commands.errors import CommandNotFound
 import discord
+
+from my_logging import log
 
 TOKEN = os.getenv('TOKEN')
 
@@ -111,14 +114,25 @@ async def guild_remove(ctx):
 async def restart(ctx):
     deact_cogs()
     init_cogs()
-    print("Cogs reiniciadas")
+    log("Cogs reiniciadas")
 
 
 @client.event
 async def on_ready():
-    print("Iniciando cogs...")
+    log("Iniciando cogs...")
     init_cogs()
-    print("O Bot está pronto!")
+    log("O Bot está pronto!")
+
+
+@client.event
+async def on_command_error(ctx, exception, /):
+    if isinstance(exception, CommandNotFound):
+        log(msg=exception, user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
+
+
+@client.event
+async def on_error(ctx, exception):
+    log(msg=exception, user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
 
 
 if __name__ == "__main__":
