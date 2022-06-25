@@ -1,14 +1,17 @@
 import os
 import json
+
 from discord.flags import Intents
 from discord.ext import commands
+import discord
 
 TOKEN = os.getenv('TOKEN')
 
+TOKEN = "OTE5MDgzNzMwMzk4NzYxMDMw.GH64qJ.iCP9FLvFc6bYmPSbJ576_KDqJzPKvAU98fPHUA"
+
 # Arquivo onde será salvo o prefixo de de cada servidor
 PREFIX_FILE = "guilds_prefix.json"
-DEFAULT_PREFIX = "."
-
+DEFAULT_PREFIX = "!"
 
 if PREFIX_FILE not in os.listdir():
     with open(PREFIX_FILE, "w") as file:
@@ -25,12 +28,16 @@ def get_prefix(client, message):
 
     return prefixes[str(message.guild.id)]
 
+activity = discord.Game(name="Prefix = !")
 
 # Inicializa o objeto com o Discord Bot
 client = commands.Bot(
     command_prefix=DEFAULT_PREFIX,
-    intents=Intents.default()
+    intents=Intents.default(),
+    activity=activity,
 )
+
+# bot = commands.Bot(command_prefix="!", activity=activity, status=discord.Status.idle)
 
 
 # Inicializa as COGS
