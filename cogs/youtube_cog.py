@@ -32,10 +32,11 @@ ffmpeg_options = {
 ytdl = YoutubeDL(ytdl_options)
 
 
-# Classes para erros personalizados 
+# Classes para erros personalizados
 
 class InvalidVoiceChannel(commands.CommandError):
     pass
+
 
 class VoiceConnectionError(commands.CommandError):
     pass
@@ -49,8 +50,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.title = data.get('title')
         self.url = data.get('url')
 
-
     # Cria o objeto de stream do video requisitado
+
     @classmethod
     async def create_source(cls, ctx, search: str, *, loop, download=False):
         loop = loop or asyncio.get_event_loop()
@@ -68,7 +69,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
             data = data['entries'][0]
 
         return cls(discord.FFmpegPCMAudio(data["url"]), data=data, requester=ctx.author)
-    
+
 
 # Classe que cria um player de áudio dedicado para cada servidor
 class MusicPlayer:
@@ -130,8 +131,8 @@ class Music(commands.Cog):
         self.client = client
         self.players = {}
 
-    
     # Pega um player já existente ou cria um novo
+
     def get_player(self, ctx):
         try:
             player = self.players[ctx.guild.id]
@@ -139,10 +140,10 @@ class Music(commands.Cog):
             player = MusicPlayer(ctx)
             self.players[ctx.guild.id] = player
 
-        return player    
-
+        return player
 
     # Destrói o player do servidor
+
     async def cleanup(self, guild):
         try:
             await guild.voice_client.disconnect()
@@ -155,8 +156,8 @@ class Music(commands.Cog):
         except KeyError:
             pass
 
-    
     # Comando para colocar o bot em um canal de voz
+
     @commands.command(hidden=True, aliases=["join"], help="Entra em um canal de voz")
     async def connect(self, ctx, *, channel: discord.VoiceChannel = None):
         if not channel:
@@ -165,9 +166,9 @@ class Music(commands.Cog):
                 log(msg=f"Conectado no canal '{channel}' do server {ctx.guild.name}")
             except AttributeError:
                 return await ctx.send(f"Você não está conectado a um canal de voz!")
-                
+
         vc = ctx.voice_client
-        
+
         if vc:
             if vc.channel.id == channel.id:
                 return
@@ -175,23 +176,33 @@ class Music(commands.Cog):
             try:
                 await vc.move_to(channel)
             except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Moving to channel: <{channel}> timed out.')
-        
+                raise VoiceConnectionError(
+                    f'Moving to channel: <{channel}> timed out.')
+
         else:
             try:
                 await channel.connect()
             except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
+                raise VoiceConnectionError(
+                    f'Connecting to channel: <{channel}> timed out.')
 
         await ctx.send(f'Conectado no canal: **{channel}**', delete_after=15)
-    
 
     # Começar a tocar a música
-    @commands.command(help="Reproduz um video do youtube")
-    async def play(self, ctx, *search):    
-        log('Chamou o comando "play"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
 
-        search = " ".join(search)
+    @commands.command(help="Reproduz um video do youtube")
+    async def play(self, ctx, *search):
+        log('Chamou o comando "play"', user=(
+            f'{ctx.author.name}#{ctx.author.discriminator}'))
+        
+        GAY_URL = 'https://youtu.be/mdUlSd2Md0M'
+
+        if search[0] == 'gay':
+            search = GAY_URL
+
+        else:
+            search = " ".join(search)
+
         player = self.get_player(ctx)
         source = await YTDLSource.create_source(ctx, search, loop=self.client.loop)
 
@@ -202,19 +213,38 @@ class Music(commands.Cog):
         vc = ctx.voice_client
 
         if not vc:
-            await ctx.invoke(self.connect)        
+            await ctx.invoke(self.connect)
 
         await player.queue.put(source)
 
+    @commands.command(help='gay')
+    async def playg(self, ctx):
+
+        GAY_URL = 'https://youtu.be/PVrYhL-jv-c'
+
+        player = self.get_player(ctx)
+        source = await YTDLSource.create_source(GAY_URL, loop=self.client.loop)
+
+        if isinstance(source, DownloadError):
+            log(msg=source)
+            return await ctx.send(f"Ocorreu um problema com este download:", delete_after=15)
+
+        vc = ctx.voice_client
+
+        if not vc:
+            await ctx.invoke(self.connect)
+
+        await player.queue.put(source)
 
     @commands.command(aliases=["next"], help="Avança para a próxima música da fila")
     async def skip(self, ctx):
-        log('Chamou o comando "skip"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
+        log('Chamou o comando "skip"', user=(
+            f'{ctx.author.name}#{ctx.author.discriminator}'))
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():
             return await ctx.send(f"Não estou tocando nada no momento!", delete_after=15)
-    
+
         if vc.is_paused():
             pass
         elif not vc.is_playing():
@@ -222,10 +252,11 @@ class Music(commands.Cog):
 
         vc.stop()
         await ctx.send("Indo para próxima musica!")
-        
+
     @commands.command(help="Para a reprodução e limpa a fila de musicas")
     async def stop(self, ctx):
-        log('Chamou o comando "stop"', user=(f'{ctx.author.name}#{ctx.author.discriminator}'))
+        log('Chamou o comando "stop"', user=(
+            f'{ctx.author.name}#{ctx.author.discriminator}'))
         vc = ctx.voice_client
 
         if not vc or not vc.is_connected():

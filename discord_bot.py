@@ -6,15 +6,16 @@ from discord.ext import commands
 from discord.ext.commands.errors import CommandNotFound
 import discord
 
+import logging
+
 from my_logging import log
 
 TOKEN = os.getenv('TOKEN')
 
-TOKEN = "OTE5MDgzNzMwMzk4NzYxMDMw.GH64qJ.iCP9FLvFc6bYmPSbJ576_KDqJzPKvAU98fPHUA"
 
 # Arquivo onde será salvo o prefixo de de cada servidor
 PREFIX_FILE = "guilds_prefix.json"
-DEFAULT_PREFIX = "!"
+DEFAULT_PREFIX = "."
 
 if PREFIX_FILE not in os.listdir():
     with open(PREFIX_FILE, "w") as file:
@@ -31,7 +32,7 @@ def get_prefix(client, message):
 
     return prefixes[str(message.guild.id)]
 
-activity = discord.Game(name="Prefix = !")
+activity = discord.Game(name=f"Prefix = {DEFAULT_PREFIX}")
 
 # Inicializa o objeto com o Discord Bot
 client = commands.Bot(
@@ -49,6 +50,7 @@ def init_cogs():
         if cog.endswith("cog.py"):
             try:
                 client.load_extension(f"cogs.{cog[:-3]}")
+                log(f"COG '{cog}' carregada")
             except Exception as e:
                 print(e)
 
@@ -119,6 +121,7 @@ async def restart(ctx):
 
 @client.event
 async def on_ready():
+    log("Iniciando BOT")
     log("Iniciando cogs...")
     init_cogs()
     log("O Bot está pronto!")
