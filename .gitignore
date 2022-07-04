@@ -5,3 +5,5 @@ __pycache__
 .dockerignore
 *.json
 .github
+TOKENS.txt
+teste.py
